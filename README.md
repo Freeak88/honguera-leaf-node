@@ -1,14 +1,10 @@
-# Leaf Node 3.1
+# Honguera Leaf Node (fork de Leaf Node 3.1)
 
-Leaf AI is an independent, open-source project. If you find it useful, you can support its continued development at [Leaf AI Support](https://leafai.io/support.html).
+> **Fork de [leafai-io/leaf-node-v3.x](https://github.com/leafai-io/leaf-node-v3.x)** — adaptado para horticultura fungi.
+>
+> Créditos y licencia: Leaf AI (AGPL-3.0 FW / CERN-OHL-S v2 HW). Este fork mantiene las mismas licencias.
 
-The Leaf Node is an open-source environmental 
-monitoring and control device built on the 
-ESP32-S3. It reads sensor data, publishes it 
-over MQTT, and can trigger actuators — allowing 
-you to monitor conditions and directly control 
-connected devices such as lights, fans, pumps 
-and valves. Configuration is handled wirelessly 
+La **Honguera Leaf Node** es un nodo de monitoreo y control ambiental open-source para cultivo de hongos, basado en ESP32-S3. Lee sensores, publica por MQTT, y activa actuadores — diseñado para ciclos de fructificación, control de CO₂, humidificación y monitoreo de sustrato. Configuration is handled wirelessly 
 via BLE, making it a self-contained building 
 block for precision agriculture and 
 environmental monitoring and automation systems.
