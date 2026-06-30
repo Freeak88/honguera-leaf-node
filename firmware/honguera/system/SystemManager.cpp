@@ -1,6 +1,5 @@
 #include "SystemManager.h"
 #include "../hardware/StatusLED.h"
-#include "../hardware/MCP4725.h"
 #include "../hardware/PWMController.h"
 #include "../diagnostics/Logger.h"
 #include <esp_system.h>
@@ -15,7 +14,7 @@ SystemManager::SystemManager()
     , lastHeartbeat_(0)
     , bootTime_(0)
     , statusLED_(nullptr)
-    , mcp4725_(nullptr)
+    , /* mcp4725_ */(nullptr)
     , pwmController_(nullptr)
     , pwmControllerMOSFET_(nullptr)
     , actuatorActive_(false) {
@@ -26,10 +25,10 @@ SystemManager::~SystemManager() {
         esp_task_wdt_deinit();
     }
     
-    // Clean up MCP4725
-    if (mcp4725_) {
-        delete mcp4725_;
-        mcp4725_ = nullptr;
+    // MCP4725 disabled
+    if (/* mcp4725_ */) {
+        delete /* mcp4725_ */;
+        /* mcp4725_ */ = nullptr;
     }
     
     // Clean up PWM Controller (IO2)
@@ -57,18 +56,20 @@ bool SystemManager::initialize() {
     
     // Initialize UART Chain Manager
     Serial.println("[SystemManager] Initializing UART Chain Manager...");
-    if (chainManager_.initialize()) {
+// chainManager removed (Honguera)
+
         Serial.println("[SystemManager] UART Chain Manager initialized successfully");
     } else {
         Serial.println("[SystemManager] WARNING: UART Chain Manager initialization failed");
     }
     
-    // Initialize MCP4725 DAC
-    Serial.println("[SystemManager] Initializing MCP4725 DAC...");
-    if (initializeMCP4725()) {
-        Serial.println("[SystemManager] MCP4725 DAC initialized successfully");
+
+
+// MCP4725 not available on Lite
+
+
     } else {
-        Serial.println("[SystemManager] WARNING: MCP4725 DAC not available");
+
     }
     
     // Initialize PWM Controller (IO2)
@@ -281,8 +282,8 @@ void SystemManager::updateActuatorDACLED() {
     
     // Check if DAC is active (value > 0)
     bool dacOn = false;
-    if (mcp4725_) {
-        dacOn = (mcp4725_->getCurrentValue() > 0);
+    if (/* mcp4725_ */) {
+        dacOn = (/* mcp4725_ */->getCurrentValue() > 0);
     }
     
     // Check if PWM IO2 is active (value > 0)
@@ -348,29 +349,28 @@ void SystemManager::updateStatusLED() {
     // This function kept for compatibility but does nothing
 }
 
-bool SystemManager::initializeMCP4725() {
+// MCP4725 not available on Lite
+
     // Note: Logger is nullptr - MCP4725 will use Serial.println as fallback
     // This avoids issues with static logger initialization
     
     // Create MCP4725 instance with 3.3V supply and 3.06x amplifier gain (LM358)
     // This allows output voltage range of 0-10.1V
-    mcp4725_ = new MCP4725(nullptr, 3.3, 3.06);
+
     
-    if (!mcp4725_) {
-        Serial.println("[SystemManager] Failed to allocate MCP4725 instance");
+    if (!/* mcp4725_ */) {
         return false;
     }
     
     // Initialize DAC with default I2C address
-    if (!mcp4725_->initialize(MCP4725_I2C_ADDRESS)) {
-        Serial.println("[SystemManager] Failed to initialize MCP4725 at address 0x" + String(MCP4725_I2C_ADDRESS, HEX));
-        delete mcp4725_;
-        mcp4725_ = nullptr;
+    if (!/* mcp4725_ */->initialize(MCP4725_I2C_ADDRESS)) {
+        delete /* mcp4725_ */;
+        /* mcp4725_ */ = nullptr;
         return false;
     }
     
     // Note: MQTT manager will be set later by LeafNode after MQTT initialization
-    Serial.println("[SystemManager] MCP4725 DAC initialized at address 0x" + String(MCP4725_I2C_ADDRESS, HEX));
+
     Serial.println("[SystemManager] Output voltage range: 0-10.1V (via 3.06x amplifier)");
     
     return true;

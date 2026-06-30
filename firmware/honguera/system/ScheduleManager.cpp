@@ -2,7 +2,6 @@
 #include "../diagnostics/Logger.h"
 #include "../runtime/RuntimeConfig.h"
 #include "../hardware/Actuator.h"
-#include "../hardware/MCP4725.h"
 #include "../hardware/PWMController.h"
 #include "../network/ActuatorStatusPublisher.h"
 #include <sys/time.h>
@@ -28,7 +27,7 @@ ScheduleManager::ScheduleManager()
 ScheduleManager::~ScheduleManager() {
 }
 
-bool ScheduleManager::initialize(Logger* logger, RuntimeConfig* config, Actuator* actuator, MCP4725* mcp4725, PWMController* pwmController, PWMController* pwmControllerMOSFET, ActuatorStatusPublisher* statusPublisher) {
+bool ScheduleManager::initialize(Logger* logger, RuntimeConfig* config, Actuator* actuator, void* mcp4725, PWMController* pwmController, PWMController* pwmControllerMOSFET, ActuatorStatusPublisher* statusPublisher) {
     if (initialized_) {
         return true;
     }
@@ -36,7 +35,7 @@ bool ScheduleManager::initialize(Logger* logger, RuntimeConfig* config, Actuator
     logger_ = logger;
     config_ = config;
     actuator_ = actuator;
-    mcp4725_ = mcp4725;
+mcp4725_ = nullptr; /* no DAC */
     pwmController_ = pwmController;
     pwmControllerMOSFET_ = pwmControllerMOSFET;
     actuatorStatusPublisher_ = statusPublisher;
@@ -935,7 +934,7 @@ bool ScheduleManager::setDACSchedule(const String& actuatorType, const String& o
                                      uint32_t rampSeconds, uint16_t validDays, int32_t timezone) {
     if (!initialized_ || !mcp4725_) {
         if (logger_) {
-            logger_->error("ScheduleManager", "MCP4725 not available for DAC schedule");
+/* no DAC */
         }
         return false;
     }

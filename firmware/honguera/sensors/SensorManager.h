@@ -4,8 +4,6 @@
 #include "../runtime/RuntimeConfig.h"
 #include "../diagnostics/Logger.h"
 #include "../network/MQTTManager.h"
-#include "../hardware/RS485Manager.h"
-#include "../hardware/SDI12Manager.h"
 #include "../hardware/OneWireManager.h"
 #include "../LeafNodeTypes.h"
 #include "config.h"
@@ -40,7 +38,7 @@ public:
      * @param mqttManager MQTT manager instance
      * @param logger Logger instance
      */
-    SensorManager(RuntimeConfig* config, RS485Manager* rs485Manager, SDI12Manager* sdi12Manager,
+    SensorManager(RuntimeConfig* config, void* rs485Manager, void* sdi12Manager,
                   OneWireManager* oneWireManager, MQTTManager* mqttManager, Logger* logger);
     
     /**
@@ -156,8 +154,8 @@ public:
 
 private:
     RuntimeConfig* config_;
-    RS485Manager* rs485Manager_;
-    SDI12Manager* sdi12Manager_;
+    void* rs485Manager_ = nullptr;
+    void* sdi12Manager_ = nullptr;
     OneWireManager* oneWireManager_;
     MQTTManager* mqttManager_;
     Logger* logger_;

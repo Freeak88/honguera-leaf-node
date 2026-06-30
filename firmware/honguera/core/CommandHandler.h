@@ -106,7 +106,7 @@ public:
     /**
      * @brief Set MCP4725 DAC for analog output control commands
      */
-    void setMCP4725(class MCP4725* mcp4725) { mcp4725_ = mcp4725; }
+    void setMCP4725(class MCP4725*) { }
 
     /**
      * @brief Set PWM Controller (IO2) for PWM output control commands
@@ -136,7 +136,7 @@ private:
     class SensorManager* sensorManager_;
     class RuntimeConfig* config_;
     class Actuator* actuator_;
-    class MCP4725* mcp4725_;
+    class MCP4725* mcp4725_ = nullptr;
     class PWMController* pwmController_;
     class PWMController* pwmControllerMOSFET_;
     class ActuatorStatusPublisher* actuatorStatusPublisher_;

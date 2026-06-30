@@ -9,7 +9,7 @@
 #include "../hardware/Actuator.h"
 
 // Forward declarations
-class MCP4725;
+
 class PWMController;
 
 /**
@@ -30,7 +30,7 @@ public:
      * @param pwmController PWM Controller IO2 instance (optional)
      * @param pwmControllerMOSFET PWM Controller MOSFET instance (optional)
      */
-    ActuatorStatusPublisher(RuntimeConfig* config, MQTTManager* mqttManager, Logger* logger, Actuator* actuator, MCP4725* mcp4725 = nullptr, PWMController* pwmController = nullptr, PWMController* pwmControllerMOSFET = nullptr);
+    ActuatorStatusPublisher(RuntimeConfig* config, MQTTManager* mqttManager, Logger* logger, Actuator* actuator, void* mcp4725 = nullptr, PWMController* pwmController = nullptr, PWMController* pwmControllerMOSFET = nullptr);
     
     /**
      * @brief Destructor
@@ -65,7 +65,7 @@ private:
     MQTTManager* mqttManager_;
     Logger* logger_;
     Actuator* actuator_;
-    MCP4725* mcp4725_;
+    void* mcp4725_;
     PWMController* pwmController_;         // PWM Controller for IO2
     PWMController* pwmControllerMOSFET_;   // PWM Controller for MOSFET
     

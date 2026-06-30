@@ -1474,16 +1474,16 @@ void SerialCommandHandler::setSensorProfile(const String& directSensorName) {
     
     Serial.println("📋 Available Sensor Types:");
     Serial.println();
-    Serial.println("  1) SLT5007     - RS485 Soil Moisture Sensor (3 min interval)");
+// RS485 sensors removed (Honguera)
     Serial.println("  2) SHT31       - I2C Temperature & Humidity (1 min interval)");
-    Serial.println("  3) CWTPSS      - RS485 Pressure Sensor (1 min interval)");
-    Serial.println("  4) LEAFTHSN    - RS485 Temp/Humidity/Soil (1 min interval)");
-    Serial.println("  5) CWTSOILTHS  - RS485 Soil Sensor (1 min interval)");
+// RS485 sensors removed (Honguera)
+
+
     Serial.println("  6) TEROS12     - SDI-12 Soil Sensor (3 min interval)");
     Serial.println("  7) EZOPH       - I2C pH Sensor (1 min interval)");
     Serial.println("  8) EZOEC       - I2C EC Sensor (1 min interval)");
     Serial.println("  9) DS18B20     - OneWire Temperature Sensor (1 min interval)");
-    Serial.println(" 10) CWTTHXXS    - RS485 Air Temp/Humidity (1 min interval)");
+
     Serial.println(" 11) NONE        - No sensor (testing only)");
     Serial.println();
     Serial.println("   (Type 'cancel' to abort, or enter sensor name directly)");

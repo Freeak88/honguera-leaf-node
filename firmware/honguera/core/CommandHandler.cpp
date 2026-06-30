@@ -6,7 +6,6 @@
 #include "../hardware/sensors/EZOph.h"
 #include "../runtime/RuntimeConfig.h"
 #include "../hardware/Actuator.h"
-#include "../hardware/MCP4725.h"
 #include "../hardware/PWMController.h"
 #include "../network/ActuatorStatusPublisher.h"
 #include "../../include/network/OTAManager.h"
@@ -1689,7 +1688,8 @@ CommandResult CommandHandler::handleDACSetValue(const JsonDocument& params) {
     }
 
     if (!mcp4725_) {
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
 
     // Execute command directly
@@ -1721,13 +1721,12 @@ CommandResult CommandHandler::handleDACSetVoltage(const JsonDocument& params) {
 
     if (!mcp4725_) {
         if (logger_) {
-            logger_->error("Command", "MCP4725 pointer is NULL!");
         }
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
     
     if (logger_) {
-        logger_->info("Command", "MCP4725 pointer is valid, calling handleCommand...");
     }
 
     // Execute command directly - isAvailable() check happens inside handleCommand
@@ -1762,7 +1761,8 @@ CommandResult CommandHandler::handleDACSetPercent(const JsonDocument& params) {
     }
 
     if (!mcp4725_) {
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
 
     bool success = mcp4725_->handleCommand("set_percent", params["parameters"]);
@@ -1792,7 +1792,8 @@ CommandResult CommandHandler::handleDACPowerDown(const JsonDocument& params) {
     }
 
     if (!mcp4725_) {
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
 
     bool success = mcp4725_->handleCommand("power_down", params["parameters"]);
@@ -1815,7 +1816,8 @@ CommandResult CommandHandler::handleDACReset(const JsonDocument& params) {
     }
 
     if (!mcp4725_) {
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
 
     bool success = mcp4725_->handleCommand("reset", params["parameters"]);
@@ -1840,7 +1842,8 @@ CommandResult CommandHandler::handleDACRead(const JsonDocument& params) {
     }
 
     if (!mcp4725_) {
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
 
     uint16_t value = mcp4725_->readValue();
@@ -1864,7 +1867,8 @@ CommandResult CommandHandler::handleDACStatus(const JsonDocument& params) {
     }
 
     if (!mcp4725_) {
-        return CommandResult(false, "MCP4725 DAC not available");
+// MCP4725 removed (Honguera)
+
     }
 
     bool available = mcp4725_->isAvailable();
@@ -1875,7 +1879,7 @@ CommandResult CommandHandler::handleDACStatus(const JsonDocument& params) {
     
     if (available) {
         uint16_t dacValue, eepromValue;
-        MCP4725::PowerDownMode powerDown;
+        int /* PowerDownMode */ powerDown;
         
         if (mcp4725_->readSettings(dacValue, eepromValue, powerDown)) {
             result.responseData["dac_value"] = dacValue;

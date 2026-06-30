@@ -1,10 +1,9 @@
 #include "ActuatorStatusPublisher.h"
-#include "../hardware/MCP4725.h"
 #include "../hardware/PWMController.h"
 #include "config.h"
 
 ActuatorStatusPublisher::ActuatorStatusPublisher(RuntimeConfig* config, MQTTManager* mqttManager, 
-                                                 Logger* logger, Actuator* actuator, MCP4725* mcp4725,
+                                                 Logger* logger, Actuator* actuator, void* mcp4725,
                                                  PWMController* pwmController, PWMController* pwmControllerMOSFET)
     : config_(config), mqttManager_(mqttManager), logger_(logger), actuator_(actuator), mcp4725_(mcp4725),
       pwmController_(pwmController), pwmControllerMOSFET_(pwmControllerMOSFET) {

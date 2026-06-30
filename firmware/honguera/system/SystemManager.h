@@ -2,11 +2,9 @@
 
 #include <Arduino.h>
 #include "../LeafNodeTypes.h"
-#include "../network/UARTChainManager.h"
 
 // Forward declarations
 class StatusLED;
-class MCP4725;
 class PWMController;
 
 /**
@@ -134,7 +132,7 @@ public:
      * @brief Update LED based on actuator and DAC state
      * Checks both actuator and DAC, shows orange LED if either is active
      */
-    void updateActuatorDACLED();
+    void updateActuatorDACLED() {}
 
     /**
      * @brief Set the status LED instance (called by LeafNode)
@@ -152,19 +150,19 @@ public:
      * @brief Get the UART Chain Manager instance
      * @return Pointer to UARTChainManager instance
      */
-    UARTChainManager* getChainManager() { return &chainManager_; }
+    UARTChainManager* getChainManager() { return nullptr; }
 
     /**
      * @brief Initialize MCP4725 DAC
      * @return true if initialization was successful
      */
-    bool initializeMCP4725();
+    // initializeMCP4725 removed (Honguera)
 
     /**
      * @brief Get the MCP4725 DAC instance
      * @return Pointer to MCP4725 instance, or nullptr if not initialized
      */
-    MCP4725* getMCP4725() { return mcp4725_; }
+    MCP4725* getMCP4725() { return nullptr; }
 
     /**
      * @brief Initialize PWM Controller
@@ -211,10 +209,10 @@ private:
     StatusLED* statusLED_;
     
     // UART Chain Manager
-    UARTChainManager chainManager_;
+    // UARTChainManager chainManager_ removed
     
     // MCP4725 DAC
-    MCP4725* mcp4725_;
+    MCP4725* mcp4725_ = nullptr;
     
     // PWM Controller (IO2)
     PWMController* pwmController_;

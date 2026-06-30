@@ -1,11 +1,11 @@
 #include "SensorManager.h"
 
-SensorManager::SensorManager(RuntimeConfig* config, RS485Manager* rs485Manager, SDI12Manager* sdi12Manager,
+SensorManager::SensorManager(RuntimeConfig* config, void* rs485Manager, void* sdi12Manager,
                              OneWireManager* oneWireManager, MQTTManager* mqttManager, Logger* logger)
-    : config_(config), rs485Manager_(rs485Manager), sdi12Manager_(sdi12Manager), oneWireManager_(oneWireManager),
+    : config_(config), rs485Manager_(nullptr), sdi12Manager_(nullptr), oneWireManager_(oneWireManager),
       mqttManager_(mqttManager), logger_(logger),
       initialized_(false), paused_(false), lastReading_(0), readingInterval_(60000), currentProfile_(SensorProfile::NONE),
-      rs485Initialized_(false), sdi12Initialized_(false), oneWireInitialized_(false),
+// HONGUERA: rs485Initialized_(false), sdi12Initialized_(false), oneWireInitialized_(false),
       consecutiveErrors_(0), lastErrorTime_(0), errorBackoffInterval_(0),
       slt5007Sensor_(nullptr), sht31Sensor_(nullptr), cwtpssSensor_(nullptr), leafthsnSensor_(nullptr), 
       cwtsoilthsSensor_(nullptr), teros12Sensor_(nullptr), ezophSensor_(nullptr), ezoecSensor_(nullptr), ds18b20Sensor_(nullptr),
@@ -62,8 +62,7 @@ bool SensorManager::initializeSensor() {
     
     switch (currentProfile_) {
         case SensorProfile::SLT5007:
-            slt5007Sensor_ = new SLT5007(rs485Manager_, logger_);
-            if (!slt5007Sensor_->initialize()) {
+                        if (!slt5007Sensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize SLT5007 sensor");
                 delete slt5007Sensor_;
                 slt5007Sensor_ = nullptr;
@@ -86,8 +85,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::CWTPSS:
-            cwtpssSensor_ = new CWTPSS(rs485Manager_, logger_);
-            if (!cwtpssSensor_->initialize()) {
+                        if (!cwtpssSensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize CWTPSS sensor");
                 delete cwtpssSensor_;
                 cwtpssSensor_ = nullptr;
@@ -98,8 +96,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::LEAFTHSN:
-            leafthsnSensor_ = new LEAFTHSN(rs485Manager_, logger_);
-            if (!leafthsnSensor_->initialize()) {
+                        if (!leafthsnSensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize LEAFTHSN sensor");
                 delete leafthsnSensor_;
                 leafthsnSensor_ = nullptr;
@@ -110,8 +107,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::CWTSOILTHS:
-            cwtsoilthsSensor_ = new CWTSoilTHS(rs485Manager_, logger_);
-            if (!cwtsoilthsSensor_->initialize()) {
+                        if (!cwtsoilthsSensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize CWTSoilTHS sensor");
                 delete cwtsoilthsSensor_;
                 cwtsoilthsSensor_ = nullptr;
@@ -122,8 +118,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::TEROS12:
-            teros12Sensor_ = new TEROS12(sdi12Manager_, logger_, SDI12_SENSOR_ADDRESS);
-            if (!teros12Sensor_->initialize()) {
+                        if (!teros12Sensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize TEROS12 sensor");
                 delete teros12Sensor_;
                 teros12Sensor_ = nullptr;
@@ -134,8 +129,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::EZOPH:
-            ezophSensor_ = new EZOph(logger_);
-            if (!ezophSensor_->initialize()) {
+                        if (!ezophSensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize EZO pH sensor");
                 delete ezophSensor_;
                 ezophSensor_ = nullptr;
@@ -146,8 +140,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::EZOEC:
-            ezoecSensor_ = new EZOec(logger_);
-            if (!ezoecSensor_->initialize()) {
+                        if (!ezoecSensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize EZO EC sensor");
                 delete ezoecSensor_;
                 ezoecSensor_ = nullptr;
@@ -170,8 +163,7 @@ bool SensorManager::initializeSensor() {
             return true;
             
         case SensorProfile::CWTTHXXS:
-            cwtthxxsSensor_ = new CWTTHXXS(rs485Manager_, logger_);
-            if (!cwtthxxsSensor_->initialize()) {
+                        if (!cwtthxxsSensor_->initialize()) {
                 logger_->error("SensorManager", "Failed to initialize CWTTHXXS sensor");
                 delete cwtthxxsSensor_;
                 cwtthxxsSensor_ = nullptr;
@@ -600,8 +592,8 @@ EZOph* SensorManager::getEZOphSensor() const {
 
 bool SensorManager::initializeBusForSensor(SensorProfile profile) {
     // Determine which bus this sensor needs
-    bool needsRS485 = false;
-    bool needsSDI12 = false;
+// RS485/SDI-12: /* bool needsRS485 removed */
+// RS485/SDI-12: /* bool needsSDI12 removed */
     bool needsOneWire = false;
     
     switch (profile) {
@@ -610,11 +602,11 @@ bool SensorManager::initializeBusForSensor(SensorProfile profile) {
         case SensorProfile::LEAFTHSN:
         case SensorProfile::CWTSOILTHS:
         case SensorProfile::CWTTHXXS:
-            needsRS485 = true;
+// RS485/SDI-12: needsRS485 = true;
             break;
             
         case SensorProfile::TEROS12:
-            needsSDI12 = true;
+// RS485/SDI-12: needsSDI12 = true;
             break;
             
         case SensorProfile::DS18B20:
@@ -635,61 +627,61 @@ bool SensorManager::initializeBusForSensor(SensorProfile profile) {
     }
     
     // Shutdown any previously initialized bus that we don't need
-    if (needsRS485 && sdi12Initialized_) {
-        logger_->info("SensorManager", "Shutting down SDI-12 bus (switching to RS485)");
-        sdi12Manager_->shutdown();
-        sdi12Initialized_ = false;
+// RS485/SDI-12: if (needsRS485 && sdi12Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Shutting down SDI-12 bus (switching to RS485)");
+// HONGUERA: sdi12Manager_->shutdown();
+// HONGUERA: sdi12Initialized_ = false;
     }
     
-    if (needsRS485 && oneWireInitialized_) {
+// RS485/SDI-12: if (needsRS485 && oneWireInitialized_) {
         logger_->info("SensorManager", "Shutting down OneWire bus (switching to RS485)");
         oneWireManager_->shutdown();
         oneWireInitialized_ = false;
     }
     
-    if (needsSDI12 && rs485Initialized_) {
-        logger_->info("SensorManager", "Shutting down RS485 bus (switching to SDI-12)");
-        rs485Manager_->shutdown();
-        rs485Initialized_ = false;
+// RS485/SDI-12: if (needsSDI12 && rs485Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Shutting down RS485 bus (switching to SDI-12)");
+// HONGUERA: rs485Manager_->shutdown();
+// HONGUERA: rs485Initialized_ = false;
     }
     
-    if (needsSDI12 && oneWireInitialized_) {
+// RS485/SDI-12: if (needsSDI12 && oneWireInitialized_) {
         logger_->info("SensorManager", "Shutting down OneWire bus (switching to SDI-12)");
         oneWireManager_->shutdown();
         oneWireInitialized_ = false;
     }
     
-    if (needsOneWire && rs485Initialized_) {
-        logger_->info("SensorManager", "Shutting down RS485 bus (switching to OneWire)");
-        rs485Manager_->shutdown();
-        rs485Initialized_ = false;
+// HONGUERA: if (needsOneWire && rs485Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Shutting down RS485 bus (switching to OneWire)");
+// HONGUERA: rs485Manager_->shutdown();
+// HONGUERA: rs485Initialized_ = false;
     }
     
-    if (needsOneWire && sdi12Initialized_) {
-        logger_->info("SensorManager", "Shutting down SDI-12 bus (switching to OneWire)");
-        sdi12Manager_->shutdown();
-        sdi12Initialized_ = false;
+// HONGUERA: if (needsOneWire && sdi12Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Shutting down SDI-12 bus (switching to OneWire)");
+// HONGUERA: sdi12Manager_->shutdown();
+// HONGUERA: sdi12Initialized_ = false;
     }
     
     // Initialize required bus if not already initialized
-    if (needsRS485 && !rs485Initialized_) {
-        logger_->info("SensorManager", "Initializing RS485 bus for sensor");
-        if (!rs485Manager_->initialize(RS485_DE_RE_PIN, 500, 9600)) {
-            logger_->error("SensorManager", "Failed to initialize RS485 bus");
+// RS485/SDI-12: if (needsRS485 && !rs485Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Initializing RS485 bus for sensor");
+// HONGUERA: if (!rs485Manager_->initialize(RS485_DE_RE_PIN, 500, 9600)) {
+// HONGUERA: logger_->error("SensorManager", "Failed to initialize RS485 bus");
             return false;
         }
-        rs485Initialized_ = true;
-        logger_->info("SensorManager", "RS485 bus initialized successfully");
+// HONGUERA: rs485Initialized_ = true;
+// HONGUERA: logger_->info("SensorManager", "RS485 bus initialized successfully");
     }
     
-    if (needsSDI12 && !sdi12Initialized_) {
-        logger_->info("SensorManager", "Initializing SDI-12 bus for sensor");
-        if (!sdi12Manager_->initialize(SDI12_DATA_PIN)) {
-            logger_->error("SensorManager", "Failed to initialize SDI-12 bus");
+// RS485/SDI-12: if (needsSDI12 && !sdi12Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Initializing SDI-12 bus for sensor");
+// HONGUERA: if (!sdi12Manager_->initialize(SDI12_DATA_PIN)) {
+// HONGUERA: logger_->error("SensorManager", "Failed to initialize SDI-12 bus");
             return false;
         }
-        sdi12Initialized_ = true;
-        logger_->info("SensorManager", "SDI-12 bus initialized successfully");
+// HONGUERA: sdi12Initialized_ = true;
+// HONGUERA: logger_->info("SensorManager", "SDI-12 bus initialized successfully");
     }
     
     if (needsOneWire && !oneWireInitialized_) {
@@ -706,16 +698,16 @@ bool SensorManager::initializeBusForSensor(SensorProfile profile) {
 }
 
 void SensorManager::cleanupBusManagers() {
-    if (rs485Initialized_) {
-        logger_->info("SensorManager", "Shutting down RS485 bus");
-        rs485Manager_->shutdown();
-        rs485Initialized_ = false;
+// HONGUERA: if (rs485Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Shutting down RS485 bus");
+// HONGUERA: rs485Manager_->shutdown();
+// HONGUERA: rs485Initialized_ = false;
     }
     
-    if (sdi12Initialized_) {
-        logger_->info("SensorManager", "Shutting down SDI-12 bus");
-        sdi12Manager_->shutdown();
-        sdi12Initialized_ = false;
+// HONGUERA: if (sdi12Initialized_) {
+// HONGUERA: logger_->info("SensorManager", "Shutting down SDI-12 bus");
+// HONGUERA: sdi12Manager_->shutdown();
+// HONGUERA: sdi12Initialized_ = false;
     }
     
     if (oneWireInitialized_) {
