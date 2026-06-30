@@ -87,6 +87,10 @@ private:
     unsigned long lastUpdateTime_;
     bool initialized_;
 
+    // Compat methods for SerialCommandHandler
+    StatusLED* getStatusLED() { return statusLED_; }
+    void simulateRegistrationAck(const String& payload) {}
+
     // Internal methods
     bool initLogger();
     bool initConfig();
